@@ -1,0 +1,18 @@
+ProServ Utilities 1.0 - Installation Guide
+-----------------------------------
+Input: 
+Please provide the API Integration key to have it bundled within the artifacts.
+
+Artifacts:
+1) proServUtilities-1.0.jar
+2) ps_token.sh
+3) ps_process.sh
+
+Installation Steps:
+1) Copy the artifacts to a location on your server - [psdir]
+2) Open script ps_token.sh and input parameter values - 'DocuSign username, password, environment and proServUtilities jar file path'
+3) Note: Integration key is bundled within the proServUtilities-1.0.jar for security reasons.
+3) Execute ps_token.sh in [psdir] and copy the output token.
+4) Open script ps_process.sh and input parameter values - 'OAuth token from above, accountid, DS environment, proServUtilities jar file path, csv output file path, nar-id'
+5) Note: accountid and nar-id will be different for US and UK installation.
+6) Schedule ps_process.sh via crontab. (ex: daily job @ 2am) * 2 * * * [psdir]/ps_process.sh
