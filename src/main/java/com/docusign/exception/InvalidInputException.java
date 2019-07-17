@@ -28,6 +28,15 @@ public class InvalidInputException extends RuntimeException {
 
 		super(message + "'s input value is invalid");
 	}
+	
+	/**
+	 * @param message
+	 * @param envelopeId
+	 */
+	public InvalidInputException(String message, String envelopeId) {
+
+		super(message + " is invalid for " + envelopeId);
+	}
 
 	/**
 	 * @param cause

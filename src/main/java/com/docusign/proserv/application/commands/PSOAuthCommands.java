@@ -47,6 +47,7 @@ import com.docusign.proserv.application.utils.PSUtils;
 
 @Configuration
 @Component
+@Deprecated
 public class PSOAuthCommands extends AbstractPSCommands implements CommandMarker {
 
 	final static Logger logger = Logger.getLogger(PSOAuthCommands.class);
@@ -292,7 +293,7 @@ public class PSOAuthCommands extends AbstractPSCommands implements CommandMarker
 
 		for (String userId : userIdList) {
 
-			AccessToken userToken = createOAuthToken(userId, integratorKey, secretKey, privatePemPath, publicPemPath,
+			AccessToken userToken = createOAuthToken(userId, integratorKey, privatePemPath, publicPemPath,
 					environment, scope, tokenExpiryLimit, proxyHost, proxyPort, audience, oAuthUrl);
 			strBuilder.append(NEW_LINE);
 			strBuilder.append(userId + "'s Token: " + userToken.getAccessToken());

@@ -43,7 +43,7 @@ public class CacheManager {
 			if (Calendar.getInstance().getTime().after(appParameters.getNextRequestedAccessTokenTime())) {
 
 				logger.info("NextRequestedAccessTokenTime- " + appParameters.getNextRequestedAccessTokenTime()
-						+ " is not null and need to create a new AccessToken in CacheManager.getAccessToken() ");
+						+ " is not null and need to create a new AccessToken in CacheManager.getAccessToken() as token has expired");
 
 				try {
 					accessToken = fetchAccessToken();
@@ -66,7 +66,7 @@ public class CacheManager {
 	private AccessToken fetchAccessToken() throws IOException {
 
 		AccessToken accessToken = PSUtils.generateAccessToken(appParameters.getUserId(),
-				appParameters.getIntegratorKey(), appParameters.getSecretKey(), appParameters.getPrivatePemPath(),
+				appParameters.getIntegratorKey(), appParameters.getPrivatePemPath(),
 				appParameters.getPublicPemPath(), appParameters.getScope(), appParameters.getTokenExpiryLimit(),
 				appParameters.getProxyHost(), appParameters.getProxyPort(), appParameters.getAudience(),
 				appParameters.getUrl());

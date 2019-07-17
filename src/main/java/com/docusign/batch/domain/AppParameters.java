@@ -24,7 +24,6 @@ public class AppParameters implements Serializable {
 	private String proxyPort;
 	private String userId;
 	private String integratorKey;
-	private String secretKey;
 	private String privatePemPath;
 	private String publicPemPath;
 	private String scope;
@@ -32,6 +31,7 @@ public class AppParameters implements Serializable {
 	private String url;
 	private String tokenExpiryLimit;
 	private Date nextRequestedAccessTokenTime;
+	private String operationName;
 
 	public Integer getMaxThreadPoolSize() {
 		return maxThreadPoolSize;
@@ -97,14 +97,6 @@ public class AppParameters implements Serializable {
 		this.integratorKey = integratorKey;
 	}
 
-	public String getSecretKey() {
-		return secretKey;
-	}
-
-	public void setSecretKey(String secretKey) {
-		this.secretKey = secretKey;
-	}
-
 	public String getPrivatePemPath() {
 		return privatePemPath;
 	}
@@ -159,6 +151,14 @@ public class AppParameters implements Serializable {
 
 	public void setNextRequestedAccessTokenTime(Date nextRequestedAccessTokenTime) {
 		this.nextRequestedAccessTokenTime = nextRequestedAccessTokenTime;
+	}
+	
+	public String getOperationName() {
+		return operationName;
+	}
+
+	public void setOperationName(String operationName) {
+		this.operationName = operationName;
 	}
 
 }

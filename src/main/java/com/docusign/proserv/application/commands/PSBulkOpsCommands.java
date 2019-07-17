@@ -73,7 +73,6 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 	@CliCommand(value = "ps_bulkops_process", help = "Generate Report CSVs")
 	public int process(@CliOption(key = { "userIds" }, mandatory = true, help = "UserIds") final String userIds,
 			@CliOption(key = { "integratorKey" }, mandatory = true, help = "Integrator Key") final String integratorKey,
-			@CliOption(key = { "secretKey" }, mandatory = true, help = "Secret Key") final String secretKey,
 			@CliOption(key = { "scope" }, mandatory = true, help = "Scope") final String scope,
 			@CliOption(key = {
 					"tokenExpiryLimit" }, mandatory = true, help = "Access Token Expiry Limit") final String tokenExpiryLimit,
@@ -112,12 +111,12 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 
 		try {
 
-			printInputParameters(userIds, integratorKey, secretKey, scope, tokenExpiryLimit, privatePemPath,
+			printInputParameters(userIds, integratorKey, scope, tokenExpiryLimit, privatePemPath,
 					publicPemPath, environment, proxyHost, proxyPort, dsBulkOperationNames, inputDirectoryPath,
 					outputDirectoryPath, appMaxThreadPoolSize, appCoreThreadPoolSize, appReminderAllowed,
 					appExpirationAllowed, validAccountGuids);
 
-			performBulkOperationForEachUser(userIds, integratorKey, secretKey, scope, tokenExpiryLimit, privatePemPath,
+			performBulkOperationForEachUser(userIds, integratorKey, scope, tokenExpiryLimit, privatePemPath,
 					publicPemPath, environment, proxyHost, proxyPort, dsBulkOperationNames, inputDirectoryPath,
 					outputDirectoryPath, appMaxThreadPoolSize, appCoreThreadPoolSize, appReminderAllowed,
 					appExpirationAllowed, validAccountGuids);
@@ -141,7 +140,7 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 		return showSuccessFailureMessages(outputDirectoryPath, "ps_oauth_process");
 	}
 
-	private void printInputParameters(String userIds, String integratorKey, String secretKey, String scope,
+	private void printInputParameters(String userIds, String integratorKey, String scope,
 			String tokenExpiryLimit, String privatePemPath, String publicPemPath, String environment, String proxyHost,
 			String proxyPort, String dsBulkOperationNames, String inputDirectoryPath, String outputDirectoryPath,
 			String appMaxThreadPoolSize, String appCoreThreadPoolSize, String appReminderAllowed,
@@ -153,7 +152,6 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 
 			logger.debug("Input userIds: " + userIds);
 			logger.debug("Input integratorKey: " + integratorKey);
-			logger.debug("Input secretKey: " + secretKey);
 			logger.debug("Input scope: " + scope);
 			logger.debug("Input tokenExpiryLimit:" + tokenExpiryLimit);
 			logger.debug("Input privatePemPath: " + privatePemPath);
@@ -173,7 +171,7 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 	}
 
 	private void performBulkOperationForEachUser(final String userIds, final String integratorKey,
-			final String secretKey, final String scope, final String tokenExpiryLimit, final String privatePemPath,
+			final String scope, final String tokenExpiryLimit, final String privatePemPath,
 			final String publicPemPath, final String environment, final String proxyHost, final String proxyPort,
 			String dsBulkOperationNames, String inputDirectoryPath, String outputDirectoryPath,
 			String appMaxThreadPoolSize, String appCoreThreadPoolSize, String appReminderAllowed,
@@ -192,7 +190,7 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 
 		for (String userId : userIdList) {
 
-			AccessToken userToken = createOAuthToken(userId, integratorKey, secretKey, privatePemPath, publicPemPath,
+			AccessToken userToken = createOAuthToken(userId, integratorKey, privatePemPath, publicPemPath,
 					environment, scope, tokenExpiryLimit, proxyHost, proxyPort, audience, oAuthUrl);
 			strBuilder.append(NEW_LINE);
 			strBuilder.append(userId + "'s Token: " + userToken.getAccessToken());
@@ -218,7 +216,14 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 							processBulkNotificationChanges(inputDirectoryPath, outputDirectoryPath,
 									appMaxThreadPoolSize, appCoreThreadPoolSize, appReminderAllowed,
 									appExpirationAllowed, proxyHost, proxyPort, account.getBaseUri(),
-									account.getAccountId(), userId, integratorKey, secretKey, privatePemPath,
+									account.getAccountId(), userId, integratorKey, privatePemPath,
+									publicPemPath, scope, tokenExpiryLimit, audience, oAuthUrl);
+							break;
+						case ENVELOPEUPDATES:
+
+							processBulkEnvelopeUpdates(inputDirectoryPath, outputDirectoryPath, appMaxThreadPoolSize,
+									appCoreThreadPoolSize, proxyHost, proxyPort, account.getBaseUri(),
+									account.getAccountId(), userId, integratorKey, privatePemPath,
 									publicPemPath, scope, tokenExpiryLimit, audience, oAuthUrl);
 							break;
 
@@ -269,9 +274,64 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 	private void processBulkNotificationChanges(String inputDirectoryPath, String outputDirectoryPath,
 			String appMaxThreadPoolSize, String appCoreThreadPoolSize, String appReminderAllowed,
 			String appExpirationAllowed, final String proxyHost, final String proxyPort, String baseUri,
-			String accountGuid, final String userId, final String integratorKey, final String secretKey,
+			String accountGuid, final String userId, final String integratorKey,
 			final String privatePemPath, final String publicPemPath, final String scope, final String tokenExpiryLimit,
 			String audience, String url) {
+
+		invokeBatchJob(inputDirectoryPath, outputDirectoryPath, appMaxThreadPoolSize, appCoreThreadPoolSize,
+				appReminderAllowed, appExpirationAllowed, proxyHost, proxyPort, baseUri, accountGuid, userId,
+				integratorKey, privatePemPath, publicPemPath, scope, tokenExpiryLimit, audience, url,
+				AppConstants.SPRING_CONTEXT_FILE_PATH, AppConstants.STRING_JOB_REPORT_FILE_PATH,
+				AppConstants.SPRING_JOB_LAUNCHER, AppConstants.SPRING_REPORT_JOB_NAME,
+				BulkOperations.NOTIFICATIONCHANGES.toString());
+	}
+
+	private void processBulkEnvelopeUpdates(String inputDirectoryPath, String outputDirectoryPath,
+			String appMaxThreadPoolSize, String appCoreThreadPoolSize, final String proxyHost, final String proxyPort,
+			String baseUri, String accountGuid, final String userId, final String integratorKey,
+			final String privatePemPath, final String publicPemPath, final String scope, final String tokenExpiryLimit,
+			String audience, String url) {
+
+		invokeBatchJob(inputDirectoryPath, outputDirectoryPath, appMaxThreadPoolSize, appCoreThreadPoolSize, null, null,
+				proxyHost, proxyPort, baseUri, accountGuid, userId, integratorKey, privatePemPath,
+				publicPemPath, scope, tokenExpiryLimit, audience, url, AppConstants.SPRING_CONTEXT_FILE_PATH,
+				AppConstants.SPRING_JOB_ENV_UPDATE_FILE_PATH, AppConstants.SPRING_JOB_LAUNCHER,
+				AppConstants.SPRING_REPORT_ENV_UPDATE_JOB_NAME, BulkOperations.ENVELOPEUPDATES.toString());
+
+	}
+
+	/**
+	 * @param inputDirectoryPath
+	 * @param outputDirectoryPath
+	 * @param appMaxThreadPoolSize
+	 * @param appCoreThreadPoolSize
+	 * @param appReminderAllowed
+	 * @param appExpirationAllowed
+	 * @param proxyHost
+	 * @param proxyPort
+	 * @param baseUri
+	 * @param accountGuid
+	 * @param userId
+	 * @param integratorKey
+	 * @param secretKey
+	 * @param privatePemPath
+	 * @param publicPemPath
+	 * @param scope
+	 * @param tokenExpiryLimit
+	 * @param audience
+	 * @param url
+	 * @param springContextFilePath
+	 * @param springJobFilePath
+	 * @param springLauncherName
+	 * @param springJobName
+	 */
+	private void invokeBatchJob(String inputDirectoryPath, String outputDirectoryPath, String appMaxThreadPoolSize,
+			String appCoreThreadPoolSize, String appReminderAllowed, String appExpirationAllowed,
+			final String proxyHost, final String proxyPort, String baseUri, String accountGuid, final String userId,
+			final String integratorKey, final String privatePemPath, final String publicPemPath,
+			final String scope, final String tokenExpiryLimit, String audience, String url,
+			String springContextFilePath, String springJobFilePath, String springLauncherName, String springJobName,
+			String operationName) {
 
 		ApplicationContext context = null;
 		File inputDirFile = new File(inputDirectoryPath);
@@ -280,23 +340,23 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 
 			if (PSUtils.isInputDirValid(inputDirFile) && null != outputDirFile && outputDirFile.isDirectory()) {
 
-				String[] springConfig = { AppConstants.SPRING_CONTEXT_FILE_PATH,
-						AppConstants.STRING_JOB_REPORT_FILE_PATH };
+				String[] springConfig = { springContextFilePath, springJobFilePath };
 
 				context = new ClassPathXmlApplicationContext(springConfig);
 
 				loadAppParameters(context, appMaxThreadPoolSize, appCoreThreadPoolSize, appReminderAllowed,
-						appExpirationAllowed, proxyHost, proxyPort, userId, integratorKey, secretKey, privatePemPath,
-						publicPemPath, scope, tokenExpiryLimit, audience, url);
+						appExpirationAllowed, proxyHost, proxyPort, userId, integratorKey, privatePemPath,
+						publicPemPath, scope, tokenExpiryLimit, audience, url, operationName);
 
-				JobLauncher jobLauncher = (JobLauncher) context.getBean(AppConstants.SPRING_JOB_LAUNCHER);
-				Job job = (Job) context.getBean(AppConstants.SPRING_REPORT_JOB_NAME);
+				JobLauncher jobLauncher = (JobLauncher) context.getBean(springLauncherName);
+				Job job = (Job) context.getBean(springJobName);
 
 				Map<String, JobParameter> parametersMap = new LinkedHashMap<String, JobParameter>();
 
 				Date jobStartDate = Calendar.getInstance().getTime();
 
-				logger.info("jobStartDate in PSBulkOpsCommands.processBulkNotificationChanges()- " + jobStartDate);
+				logger.info("jobStartDate for " + operationName + " in PSBulkOpsCommands.invokeBatchJob()- "
+						+ jobStartDate);
 
 				DateFormat format = new SimpleDateFormat(AppConstants.FILE_NAME_DATE_PATTERN);
 				parametersMap.put(AppConstants.JOB_START_TIME_PARAM_NAME,
@@ -313,36 +373,32 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 				JobParameters jobParameters = new JobParameters(parametersMap);
 
 				logger.info(
-						" ------------ About to start job in PSBulkOpsCommands.processBulkNotificationChanges() ------------ "
-								+ job);
+						" ------------ About to start job in PSBulkOpsCommands.invokeBatchJob() ------------ " + job);
 
 				JobExecution execution = jobLauncher.run(job, jobParameters);
 
-				logger.info("In PSBulkOpsCommands.processBulkNotificationChanges() currentCount- "
+				logger.info("In PSBulkOpsCommands.invokeBatchJob() currentCount- "
 						+ execution.getExecutionContext().get("currentCount") + " totalFileCount- " + totalFilesCount
 						+ " successCount- " + execution.getExecutionContext().get("successCount") + " failureCount- "
 						+ execution.getExecutionContext().get("failureCount") + " failureFileNames- "
 						+ execution.getExecutionContext().get("failureFileNames"));
-				logger.info(
-						" ------------ Exit Status in PSBulkOpsCommands.processBulkNotificationChanges() ------------  "
-								+ execution.getStatus());
+				logger.info(" ------------ Exit Status in PSBulkOpsCommands.invokeBatchJob() ------------  "
+						+ execution.getStatus());
 			} else {
 				logger.error(inputDirectoryPath
-						+ " is not a directory or no file exists in the directory in PSBulkOpsCommands.processBulkNotificationChanges()");
+						+ " is not a directory or no file exists in the directory in PSBulkOpsCommands.invokeBatchJob()");
 			}
 		} catch (JobExecutionAlreadyRunningException e) {
-			logger.error(
-					"JobExecutionAlreadyRunningException in PSBulkOpsCommands.processBulkNotificationChanges()" + e);
+			logger.error("JobExecutionAlreadyRunningException in PSBulkOpsCommands.invokeBatchJob()" + e);
 			e.printStackTrace();
 		} catch (JobRestartException e) {
-			logger.error("JobRestartException in PSBulkOpsCommands.processBulkNotificationChanges()" + e);
+			logger.error("JobRestartException in PSBulkOpsCommands.invokeBatchJob()" + e);
 			e.printStackTrace();
 		} catch (JobInstanceAlreadyCompleteException e) {
-			logger.error(
-					"JobInstanceAlreadyCompleteException in PSBulkOpsCommands.processBulkNotificationChanges()" + e);
+			logger.error("JobInstanceAlreadyCompleteException in PSBulkOpsCommands.invokeBatchJob()" + e);
 			e.printStackTrace();
 		} catch (JobParametersInvalidException e) {
-			logger.error("JobParametersInvalidException in PSBulkOpsCommands.processBulkNotificationChanges()" + e);
+			logger.error("JobParametersInvalidException in PSBulkOpsCommands.invokeBatchJob()" + e);
 			e.printStackTrace();
 		} finally {
 			if (null != context) {
@@ -354,8 +410,8 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 	private void loadAppParameters(ApplicationContext context, String appMaxThreadPoolSize,
 			String appCoreThreadPoolSize, String appReminderAllowed, String appExpirationAllowed,
 			final String proxyHost, final String proxyPort, final String userId, final String integratorKey,
-			final String secretKey, final String privatePemPath, final String publicPemPath, final String scope,
-			final String tokenExpiryLimit, String audience, String url) {
+			final String privatePemPath, final String publicPemPath, final String scope,
+			final String tokenExpiryLimit, String audience, String url, String operationName) {
 
 		Integer maxThreadPoolSize = Integer.parseInt(appMaxThreadPoolSize);
 		Integer coreThreadPoolSize = Integer.parseInt(appCoreThreadPoolSize);
@@ -375,12 +431,12 @@ public class PSBulkOpsCommands extends AbstractPSCommands implements CommandMark
 		appParameters.setProxyPort(proxyPort);
 		appParameters.setUserId(userId);
 		appParameters.setIntegratorKey(integratorKey);
-		appParameters.setSecretKey(secretKey);
 		appParameters.setPrivatePemPath(privatePemPath);
 		appParameters.setPublicPemPath(publicPemPath);
 		appParameters.setScope(scope);
 		appParameters.setTokenExpiryLimit(tokenExpiryLimit);
 		appParameters.setAudience(audience);
 		appParameters.setUrl(url);
+		appParameters.setOperationName(operationName);
 	}
 }

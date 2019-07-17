@@ -90,12 +90,12 @@ public abstract class AbstractPSCommands {
 	 * @return
 	 * @throws IOException
 	 */
-	protected AccessToken createOAuthToken(final String userId, final String integratorKey, final String secretKey,
+	protected AccessToken createOAuthToken(final String userId, final String integratorKey,
 			final String privatePemPath, final String publicPemPath, final String environment, final String scope,
 			final String tokenExpiryLimit, final String proxyHost, final String proxyPort, String audience,
 			String oAuthUrl) throws IOException {
 
-		return PSUtils.generateAccessToken(userId, integratorKey, secretKey, privatePemPath, publicPemPath, scope,
+		return PSUtils.generateAccessToken(userId, integratorKey, privatePemPath, publicPemPath, scope,
 				tokenExpiryLimit, proxyHost, proxyPort, audience, oAuthUrl);
 
 	}

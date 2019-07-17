@@ -9,7 +9,7 @@ import org.springframework.shell.core.JLineShellComponent;
 
 public class ProservUtilitiesCommandTests {
 
-	private static String PS_PROCESS = "ps_bulkops_process --userIds 5060f41e-7b6b-46f9-afb3-8e6a43b92e3e --integratorKey 46a921cc-704e-4f6b-a1be-4d23f1fae49a --secretKey 6b97d885-16a9-4d0b-af9c-136386b562f1 --scope signature --tokenExpiryLimit 3600 --privatePemPath C:\\SWSetup\\Sabre\\mydata\\DemoOAuth-private.pem --publicPemPath C:\\SWSetup\\Sabre\\mydata\\DemoOAuth-public.pem --env demo --inDirpath C:\\SWSetup\\Sabre\\mydata\\input --outDirpath C:\\SWSetup\\Sabre\\mydata\\output --operationNames NOTIFICATIONCHANGES --appMaxThreadPoolSize 1 --appCoreThreadPoolSize 1 --appReminderAllowed false --appExpirationAllowed true --validAccountGuids f87f6342-ecfd-4100-96d8-9efda13d298e";
+	private static String PS_PROCESS = "ps_bulkops_process --userIds 5060f41e-7b6b-46f9-afb3-8e6a43b92e3e --integratorKey 46a921cc-704e-4f6b-a1be-4d23f1fae49a --scope signature --tokenExpiryLimit 3600 --privatePemPath C:\\SWSetup\\Sabre\\mydata\\DemoOAuth-private.pem --publicPemPath C:\\SWSetup\\Sabre\\mydata\\DemoOAuth-public.pem --env demo --inDirpath C:\\SWSetup\\Sabre\\mydata\\input --outDirpath C:\\SWSetup\\Sabre\\mydata\\output --operationNames NOTIFICATIONCHANGES --appMaxThreadPoolSize 1 --appCoreThreadPoolSize 1 --appReminderAllowed false --appExpirationAllowed true --validAccountGuids f87f6342-ecfd-4100-96d8-9efda13d298e";
 
 	@Test
 	public void psProcessHappyPath() {

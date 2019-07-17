@@ -28,28 +28,40 @@ public class CreateInputCsv {
 		String line = "";
 		List<EnvelopeData> envelopeDataList = new ArrayList<EnvelopeData>();
 		List<List<EnvelopeData>> envelopeDataDataList = new ArrayList<List<EnvelopeData>>();
-		try (BufferedReader br = new BufferedReader(new FileReader("C:\\SWSetup\\Sabre\\mydata\\input\\properData.csv"))) {
+		try (BufferedReader br = new BufferedReader(new FileReader("C:\\SWSetup\\UHG\\csv/Envelope_Report_-_MedSurge.csv"))) {
 
 			int count = 0;
             while ((line = br.readLine()) != null) {
             	
             	EnvelopeData envelopeData = new EnvelopeData();
-            	envelopeData.setEnvelopeId(line);
-            	envelopeData.setReminderEnabled("");
-            	envelopeData.setReminderDelay("");
-            	envelopeData.setReminderFrequency("");
-            	envelopeData.setExpireEnabled("true");
-            	envelopeData.setExpireAfter("360");
-            	envelopeData.setExpireWarn("30");
             	
-            	envelopeDataList.add(envelopeData);
-            	count++;
-            	
-            	if(count%950 == 0){
-            		envelopeDataDataList.add(envelopeDataList);
-            		envelopeDataList = new ArrayList<EnvelopeData>();
+            	String envelopeId = null;
+            	String envelopeStatus = null;
+            	if(line.contains(",")){
+            		String splitArr[] = line.split(",");
+            		envelopeId = splitArr[0];
+            		envelopeStatus = splitArr[1];
             	}
-
+            	
+            	if(!"Completed".equalsIgnoreCase(envelopeStatus) && !"Declined".equalsIgnoreCase(envelopeStatus)){
+            		
+            		envelopeData.setEnvelopeId(envelopeId);
+                	envelopeData.setReminderEnabled("FALSE");
+                	envelopeData.setReminderDelay("3");
+                	envelopeData.setReminderFrequency("3");
+                	envelopeData.setExpireEnabled("");
+                	envelopeData.setExpireAfter("");
+                	envelopeData.setExpireWarn("");
+                	
+                	envelopeDataList.add(envelopeData);
+                	count++;
+                	
+                	if(count%9500 == 0){
+                		envelopeDataDataList.add(envelopeDataList);
+                		envelopeDataList = new ArrayList<EnvelopeData>();
+                	}
+            	}
+            	
             }
             
             if(null != envelopeDataList && !envelopeDataList.isEmpty()){
@@ -59,7 +71,7 @@ public class CreateInputCsv {
             int i = 1;
             for(List<EnvelopeData> envelopeDataListLoop: envelopeDataDataList){
             	
-            	CSVTestFileWriter.writeEnvelopeCsv("C:\\SWSetup\\Sabre\\mydata\\input\\" + "envelopeInput_" + i + ".csv", envelopeDataListLoop);
+            	CSVTestFileWriter.writeEnvelopeCsv("C:\\SWSetup\\UHG\\csv\\split/" + "envelopeInput_" + i + ".csv", envelopeDataListLoop);
             	i++;
             }
             

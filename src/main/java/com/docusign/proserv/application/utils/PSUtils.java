@@ -176,7 +176,7 @@ public class PSUtils {
 	 * @throws IOException
 	 */
 	public static AccessToken generateAccessToken(final String userId, final String integratorKey,
-			final String secretKey, final String privatePemPath, final String publicPemPath, final String scope,
+			final String privatePemPath, final String publicPemPath, final String scope,
 			final String tokenExpiryLimit, final String proxyHost, final String proxyPort, String audience,
 			String oAuthUrl) throws IOException {
 
@@ -190,7 +190,7 @@ public class PSUtils {
 
 		RestTemplate restTemplate = PSUtils.initiateRestTemplate(proxyHost, proxyPort);
 
-		HttpEntity<String> entity = getHttpEntity(integratorKey, secretKey, jwt);
+		HttpEntity<String> entity = getHttpEntity(jwt);
 
 		logger.info("oAuthUrl for generating accesstoken is " + oAuthUrl);
 
@@ -206,12 +206,9 @@ public class PSUtils {
 	 * @param jwt
 	 * @return
 	 */
-	private static HttpEntity<String> getHttpEntity(final String integratorKey, final String secretKey, String jwt) {
+	private static HttpEntity<String> getHttpEntity(String jwt) {
 
 		HttpHeaders headers = new HttpHeaders();
-		String plainCreds = integratorKey + ":" + secretKey;
-
-		headers.add(HttpHeaders.AUTHORIZATION, "Basic " + PSUtils.getEncodedBase64Data(plainCreds));
 		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
 		String msgBody = "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" + jwt;

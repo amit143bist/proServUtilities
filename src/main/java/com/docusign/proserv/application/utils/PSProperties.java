@@ -103,6 +103,10 @@ public class PSProperties {
 	public String getEnvelopesNotificationApi() {
 		return env.getProperty("ds.account.envelope.notification.api");
 	}
+	
+	public String getEnvelopesUpdateApi() {
+		return env.getProperty("ds.account.envelope.update.api");
+	}
 
 	public String getReqKeysMissingErrorMessage() {
 		return env.getProperty("ps.req.keys.missing.error.message");

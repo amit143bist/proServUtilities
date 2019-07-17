@@ -10,9 +10,7 @@ import java.math.BigInteger;
  *
  */
 // envelopeId,reminderEnabled,reminderDelay,reminderFrequency,expireEnabled,expireAfter,expireWarn
-public class EnvelopeDetails {
-
-	private String envelopeId;
+public class EnvelopeDetails extends AbstractEnvelopeItem {
 
 	private Boolean reminderEnabled;
 
@@ -25,24 +23,6 @@ public class EnvelopeDetails {
 	private BigInteger expireAfter;
 
 	private BigInteger expireWarn;
-
-	private Boolean success;
-
-	private String transMessage;
-
-	private String rateLimitReset;
-
-	private String rateLimitLimit;
-
-	private String rateLimitRemaining;
-
-	public String getEnvelopeId() {
-		return envelopeId;
-	}
-
-	public void setEnvelopeId(String envelopeId) {
-		this.envelopeId = envelopeId;
-	}
 
 	public Boolean getReminderEnabled() {
 		return reminderEnabled;
@@ -92,43 +72,4 @@ public class EnvelopeDetails {
 		this.expireWarn = expireWarn;
 	}
 
-	public Boolean getSuccess() {
-		return success;
-	}
-
-	public void setSuccess(Boolean success) {
-		this.success = success;
-	}
-
-	public String getTransMessage() {
-		return transMessage;
-	}
-
-	public void setTransMessage(String transMessage) {
-		this.transMessage = transMessage;
-	}
-
-	public String getRateLimitReset() {
-		return rateLimitReset;
-	}
-
-	public void setRateLimitReset(String rateLimitReset) {
-		this.rateLimitReset = rateLimitReset;
-	}
-
-	public String getRateLimitLimit() {
-		return rateLimitLimit;
-	}
-
-	public void setRateLimitLimit(String rateLimitLimit) {
-		this.rateLimitLimit = rateLimitLimit;
-	}
-
-	public String getRateLimitRemaining() {
-		return rateLimitRemaining;
-	}
-
-	public void setRateLimitRemaining(String rateLimitRemaining) {
-		this.rateLimitRemaining = rateLimitRemaining;
-	}
 }

@@ -11,24 +11,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.batch.core.ItemProcessListener;
 
-import com.docusign.batch.domain.EnvelopeDetails;
+import com.docusign.batch.domain.AbstractEnvelopeItem;
 import com.docusign.proserv.application.utils.PSUtils;
 
 /**
  * @author Amit.Bist
  *
  */
-public class CustomItemProcessListener implements ItemProcessListener<EnvelopeDetails, EnvelopeDetails> {
+public class CustomItemProcessListener implements ItemProcessListener<AbstractEnvelopeItem, AbstractEnvelopeItem> {
 
 	final static Logger logger = Logger.getLogger(CustomItemProcessListener.class);
 
 	@Override
-	public void beforeProcess(EnvelopeDetails item) {
+	public void beforeProcess(AbstractEnvelopeItem item) {
 
 	}
 
 	@Override
-	public void afterProcess(EnvelopeDetails item, EnvelopeDetails result) {
+	public void afterProcess(AbstractEnvelopeItem item, AbstractEnvelopeItem result) {
 
 		if (!StringUtils.isEmpty(item.getRateLimitReset())) {
 
@@ -61,7 +61,7 @@ public class CustomItemProcessListener implements ItemProcessListener<EnvelopeDe
 	}
 
 	@Override
-	public void onProcessError(EnvelopeDetails item, Exception e) {
+	public void onProcessError(AbstractEnvelopeItem item, Exception e) {
 
 	}
 

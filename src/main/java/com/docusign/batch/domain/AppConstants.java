@@ -21,9 +21,12 @@ public interface AppConstants {
 
 	String SPRING_CONTEXT_FILE_PATH = "classpath*:/META-INF/spring/batch/config/context.xml";
 	String STRING_JOB_REPORT_FILE_PATH = "classpath*:/META-INF/spring/batch/jobs/job-report.xml";
+	
+	String SPRING_JOB_ENV_UPDATE_FILE_PATH = "classpath*:/META-INF/spring/batch/jobs/job-dsenvelopeupdate.xml";
 
 	String SPRING_JOB_LAUNCHER = "jobLauncher";
 	String SPRING_REPORT_JOB_NAME = "reportJob";
+	String SPRING_REPORT_ENV_UPDATE_JOB_NAME = "envUpdateJob";
 
 	String FILE_NAME_DATE_PATTERN = "yyyyMMdd_HHmmss";
 

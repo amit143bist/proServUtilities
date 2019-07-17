@@ -4,26 +4,18 @@
 package com.docusign.batch.processor;
 
 import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 
-import com.docusign.batch.domain.AppConstants;
 import com.docusign.batch.domain.AppParameters;
 import com.docusign.batch.domain.EnvelopeDetails;
 import com.docusign.jwt.domain.AccessToken;
 import com.docusign.proserv.application.cache.CacheManager;
-import com.docusign.proserv.application.domain.DSErrors;
 import com.docusign.proserv.application.domain.Expirations;
 import com.docusign.proserv.application.domain.Notification;
 import com.docusign.proserv.application.domain.Reminders;
@@ -36,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Amit.Bist
  *
  */
-public class DSAPIProcessor implements ItemProcessor<EnvelopeDetails, EnvelopeDetails> {
+public class DSAPIProcessor extends AbstractAPIProcessor implements ItemProcessor<EnvelopeDetails, EnvelopeDetails> {
 
 	final static Logger logger = Logger.getLogger(DSAPIProcessor.class);
 
@@ -105,77 +97,15 @@ public class DSAPIProcessor implements ItemProcessor<EnvelopeDetails, EnvelopeDe
 
 			logger.debug("url in DSNotificationProcessor.process() " + url);
 
-			ResponseEntity<String> responseEntity = proServServiceTemplate.getRestTemplate(appParameters).exchange(url,
-					HttpMethod.PUT, uri, String.class);
-
-			logger.info("Notification updated successfully for " + envDetails.getEnvelopeId());
-			HttpHeaders responseHeaders = responseEntity.getHeaders();
-			processResponseHeaders(envDetails, responseHeaders, "SuccessCall");
-			envDetails.setSuccess(true);
-			envDetails.setTransMessage(AppConstants.TRANS_SUCCESS_MSG);
+			callDSAPI(proServServiceTemplate, appParameters, envDetails, uri, url);
 		} catch (Exception exp) {
 
 			exp.printStackTrace();
 
-			DSErrors error = null;
-			String transMessage = null;
-			if (exp instanceof HttpClientErrorException) {
-
-				HttpClientErrorException clientExp = (HttpClientErrorException) exp;
-
-				logger.error(
-						"HttpClientErrorException DSAPIProcessor.process()- " + clientExp.getResponseBodyAsString());
-
-				HttpHeaders responseHeaders = clientExp.getResponseHeaders();
-				processResponseHeaders(envDetails, responseHeaders, "HttpClientErrorException");
-
-				if (clientExp.getResponseBodyAsString().contains("errorCode")) {
-
-					error = objectMapper.readValue(clientExp.getResponseBodyAsString(), DSErrors.class);
-				}
-			}
-
-			logger.error("Exception in DSAPIProcessor.process()- " + exp.getMessage() + " to process "
-					+ envDetails.getEnvelopeId());
-
-			transMessage = exp.getMessage();
-			if (null != error) {
-				transMessage = error.getErrorCode() + "_" + error.getMessage();
-			}
-
-			envDetails.setSuccess(false);
-			envDetails.setTransMessage(transMessage);
-			logger.info("Transaction failed to set in DSAPIProcessor.process() for " + envDetails.getEnvelopeId());
+			handleExceptionData(objectMapper, envDetails, exp);
 		}
 
 		return envDetails;
-	}
-
-	/**
-	 * @param envDetails
-	 * @param responseEntity
-	 */
-	private void processResponseHeaders(EnvelopeDetails envDetails, HttpHeaders responseHeaders, String callingCode) {
-
-		Set<Entry<String, List<String>>> headerEntrySet = responseHeaders.entrySet();
-		for (Entry<String, List<String>> headerEntry : headerEntrySet) {
-			logger.debug("In " + callingCode + " DSAPIProcessor.processResponseHeaders() HeaderKey- "
-					+ headerEntry.getKey() + " Value- " + headerEntry.getValue());
-
-			switch (headerEntry.getKey()) {
-
-			case AppConstants.DS_HEADER_X_RATELIMIT_RESET:
-				envDetails.setRateLimitReset(headerEntry.getValue().get(0));
-				break;
-			case AppConstants.DS_HEADER_X_RATELIMIT_LIMIT:
-				envDetails.setRateLimitLimit(headerEntry.getValue().get(0));
-				break;
-			case AppConstants.DS_HEADER_X_RATELIMIT_REMAINING:
-				envDetails.setRateLimitRemaining(headerEntry.getValue().get(0));
-				break;
-			default:
-			}
-		}
 	}
 
 	/**
