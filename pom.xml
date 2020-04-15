@@ -15,7 +15,7 @@
 		<jar.mainclass>org.springframework.shell.Bootstrap</jar.mainclass>
 		<spring.version>5.1.8.RELEASE</spring.version>
 		<spring.batch.version>4.1.2.RELEASE</spring.batch.version>
-		<jackson.version>2.9.9</jackson.version>
+		<jackson.version>2.10.3</jackson.version>
 		<super-csv.version>2.3.0</super-csv.version>
 		<commons-lang3.version>3.7</commons-lang3.version>
 		<java-jwt.version>3.2.0</java-jwt.version>
