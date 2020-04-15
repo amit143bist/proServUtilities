@@ -21,21 +21,29 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * @author Amit.Bist
+ *
+ */
 public abstract class AbstractAPIProcessor {
 
 	final static Logger logger = Logger.getLogger(AbstractAPIProcessor.class);
 
 	/**
 	 * @param envelopeItem
-	 * @param responseEntity
+	 * @param responseHeaders
+	 * @param callingCode
+	 * @param httpStatusCode
 	 */
 	protected void processResponseHeaders(AbstractEnvelopeItem envelopeItem, HttpHeaders responseHeaders,
-			String callingCode) {
+			String callingCode, Integer httpStatusCode) {
 
+		envelopeItem.setHttpStatus(httpStatusCode);
 		Set<Entry<String, List<String>>> headerEntrySet = responseHeaders.entrySet();
 		for (Entry<String, List<String>> headerEntry : headerEntrySet) {
 			logger.debug("In " + callingCode + " AbstractAPIProcessor.processResponseHeaders() HeaderKey- "
-					+ headerEntry.getKey() + " Value- " + headerEntry.getValue());
+					+ headerEntry.getKey() + " Value- " + headerEntry.getValue() + " httpStatusCode- "
+					+ httpStatusCode);
 
 			switch (headerEntry.getKey()) {
 
@@ -47,6 +55,15 @@ public abstract class AbstractAPIProcessor {
 				break;
 			case AppConstants.DS_HEADER_X_RATELIMIT_REMAINING:
 				envelopeItem.setRateLimitRemaining(headerEntry.getValue().get(0));
+				break;
+			case AppConstants.DS_HEADER_X_BURSTLIMIT_REMAINING:
+				envelopeItem.setBurstLimitRemaining(headerEntry.getValue().get(0));
+				break;
+			case AppConstants.DS_HEADER_X_BURSTLIMIT_LIMIT:
+				envelopeItem.setBurstLimitLimit(headerEntry.getValue().get(0));
+				break;
+			case AppConstants.DS_HEADER_X_DOCUSIGN_TRACETOKEN:
+				envelopeItem.setDocuSignTraceToken(headerEntry.getValue().get(0));
 				break;
 			default:
 			}
@@ -63,17 +80,22 @@ public abstract class AbstractAPIProcessor {
 	 */
 	protected void handleExceptionData(ObjectMapper objectMapper, AbstractEnvelopeItem envelopeItem, Exception exp)
 			throws IOException, JsonParseException, JsonMappingException {
+
 		DSErrors error = null;
 		String transMessage = null;
+
 		if (exp instanceof HttpClientErrorException) {
 
 			HttpClientErrorException clientExp = (HttpClientErrorException) exp;
 
-			logger.error(
-					"HttpClientErrorException AbstractAPIProcessor.process()- " + clientExp.getResponseBodyAsString());
-
 			HttpHeaders responseHeaders = clientExp.getResponseHeaders();
-			processResponseHeaders(envelopeItem, responseHeaders, "HttpClientErrorException");
+			processResponseHeaders(envelopeItem, responseHeaders, "HttpClientErrorException",
+					clientExp.getRawStatusCode());
+
+			logger.error("HttpClientErrorException AbstractAPIProcessor.process()- "
+					+ clientExp.getResponseBodyAsString() + " errorCode " + clientExp.getRawStatusCode());
+			logger.error(" :::::::::::::::::::: DS Trace Token :::::::::::::::::::: "
+					+ envelopeItem.getDocuSignTraceToken());
 
 			if (clientExp.getResponseBodyAsString().contains("errorCode")) {
 
@@ -91,7 +113,8 @@ public abstract class AbstractAPIProcessor {
 
 		envelopeItem.setSuccess(false);
 		envelopeItem.setTransMessage(transMessage);
-		logger.info("Transaction failed to set in AbstractAPIProcessor.process() for " + envelopeItem.getEnvelopeId() + " errorMessage is " + transMessage);
+		logger.info("Transaction failed to set in AbstractAPIProcessor.process() for " + envelopeItem.getEnvelopeId()
+				+ " errorMessage is " + transMessage);
 	}
 
 	/**
@@ -103,13 +126,13 @@ public abstract class AbstractAPIProcessor {
 	 */
 	protected void callDSAPI(ProServServiceTemplate proServServiceTemplate, AppParameters appParameters,
 			AbstractEnvelopeItem envelopeItem, HttpEntity<String> uri, String url) {
-		
+
 		ResponseEntity<String> responseEntity = proServServiceTemplate.getRestTemplate(appParameters).exchange(url,
 				HttpMethod.PUT, uri, String.class);
 
 		logger.info(appParameters.getOperationName() + " completed successfully for " + envelopeItem.getEnvelopeId());
 		HttpHeaders responseHeaders = responseEntity.getHeaders();
-		processResponseHeaders(envelopeItem, responseHeaders, "SuccessCall");
+		processResponseHeaders(envelopeItem, responseHeaders, "SuccessCall", responseEntity.getStatusCodeValue());
 		envelopeItem.setSuccess(true);
 		envelopeItem.setTransMessage(AppConstants.TRANS_SUCCESS_MSG);
 	}

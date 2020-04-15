@@ -3,7 +3,7 @@ package com.docusign.batch.domain;
 public abstract class AbstractEnvelopeItem {
 
 	private String envelopeId;
-	
+
 	private Boolean success;
 
 	private String transMessage;
@@ -13,6 +13,14 @@ public abstract class AbstractEnvelopeItem {
 	private String rateLimitLimit;
 
 	private String rateLimitRemaining;
+
+	private String burstLimitRemaining;
+
+	private String burstLimitLimit;
+
+	private String docuSignTraceToken;
+
+	private Integer httpStatusCode;
 
 	public String getEnvelopeId() {
 		return envelopeId;
@@ -60,5 +68,37 @@ public abstract class AbstractEnvelopeItem {
 
 	public void setRateLimitRemaining(String rateLimitRemaining) {
 		this.rateLimitRemaining = rateLimitRemaining;
+	}
+
+	public String getBurstLimitRemaining() {
+		return burstLimitRemaining;
+	}
+
+	public void setBurstLimitRemaining(String burstLimitRemaining) {
+		this.burstLimitRemaining = burstLimitRemaining;
+	}
+
+	public String getBurstLimitLimit() {
+		return burstLimitLimit;
+	}
+
+	public void setBurstLimitLimit(String burstLimitLimit) {
+		this.burstLimitLimit = burstLimitLimit;
+	}
+
+	public String getDocuSignTraceToken() {
+		return docuSignTraceToken;
+	}
+
+	public void setDocuSignTraceToken(String docuSignTraceToken) {
+		this.docuSignTraceToken = docuSignTraceToken;
+	}
+
+	public Integer getHttpStatusCode() {
+		return httpStatusCode;
+	}
+
+	public void setHttpStatus(Integer httpStatusCode) {
+		this.httpStatusCode = httpStatusCode;
 	}
 }

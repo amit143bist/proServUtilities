@@ -21,7 +21,7 @@ public interface AppConstants {
 
 	String SPRING_CONTEXT_FILE_PATH = "classpath*:/META-INF/spring/batch/config/context.xml";
 	String STRING_JOB_REPORT_FILE_PATH = "classpath*:/META-INF/spring/batch/jobs/job-report.xml";
-	
+
 	String SPRING_JOB_ENV_UPDATE_FILE_PATH = "classpath*:/META-INF/spring/batch/jobs/job-dsenvelopeupdate.xml";
 
 	String SPRING_JOB_LAUNCHER = "jobLauncher";
@@ -49,5 +49,8 @@ public interface AppConstants {
 	String DS_HEADER_X_RATELIMIT_RESET = "X-RateLimit-Reset";
 	String DS_HEADER_X_RATELIMIT_LIMIT = "X-RateLimit-Limit";
 	String DS_HEADER_X_RATELIMIT_REMAINING = "X-RateLimit-Remaining";
+	String DS_HEADER_X_BURSTLIMIT_REMAINING = "X-BurstLimit-Remaining";
+	String DS_HEADER_X_BURSTLIMIT_LIMIT = "X-BurstLimit-Limit";
+	String DS_HEADER_X_DOCUSIGN_TRACETOKEN = "X-DocuSign-TraceToken";
 
 }

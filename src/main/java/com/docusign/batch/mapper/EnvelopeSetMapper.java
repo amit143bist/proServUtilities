@@ -33,8 +33,7 @@ public class EnvelopeSetMapper implements FieldSetMapper<EnvelopeDetails> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.springframework.batch.item.file.mapping.FieldSetMapper#mapFieldSet(
+	 * @see org.springframework.batch.item.file.mapping.FieldSetMapper#mapFieldSet(
 	 * org.springframework.batch.item.file.transform.FieldSet)
 	 * 
 	 * envelopeId,reminderEnabled,reminderDelay,reminderFrequency,expireEnabled,

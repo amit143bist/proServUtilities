@@ -31,7 +31,7 @@ public class CustomBeanWrapperFieldExtractor<T> implements FieldExtractor<T> {
 
 		BeanWrapper bw = new BeanWrapperImpl(item);
 		for (String propertyName : headerArr) {
-			values.add(bw.getPropertyValue(propertyName));
+			values.add("\"" + bw.getPropertyValue(propertyName) + "\"");
 		}
 		return values.toArray();
 		

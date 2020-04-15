@@ -70,8 +70,7 @@ public class DSAPIProcessor extends AbstractAPIProcessor implements ItemProcesso
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.springframework.batch.item.ItemProcessor#process(java.lang.Object)
+	 * @see org.springframework.batch.item.ItemProcessor#process(java.lang.Object)
 	 */
 	@Override
 	public EnvelopeDetails process(EnvelopeDetails envDetails) throws Exception {
@@ -95,7 +94,7 @@ public class DSAPIProcessor extends AbstractAPIProcessor implements ItemProcesso
 			String url = MessageFormat.format(psProps.getEnvelopesNotificationApi(), baseUri, accountGuid,
 					envDetails.getEnvelopeId());
 
-			logger.debug("url in DSNotificationProcessor.process() " + url);
+			logger.debug("url in DSNotificationProcessor.process() " + url + " uri is " + uri);
 
 			callDSAPI(proServServiceTemplate, appParameters, envDetails, uri, url);
 		} catch (Exception exp) {

@@ -11,7 +11,7 @@ public class PSProperties {
 
 	@Autowired
 	private Environment env;
-	
+
 	public String getCustomerSystemText() {
 		return env.getProperty("customer.system.text");
 	}
@@ -59,7 +59,7 @@ public class PSProperties {
 	public String getEnvErrorMessage() {
 		return env.getProperty("environment.error.message");
 	}
-	
+
 	public String getOperationErrorMessage() {
 		return env.getProperty("dsoperation.error.message");
 	}
@@ -99,11 +99,11 @@ public class PSProperties {
 	public String getAccountCustomFieldsApi() {
 		return env.getProperty("ds.account.envelope.customfields.api");
 	}
-	
+
 	public String getEnvelopesNotificationApi() {
 		return env.getProperty("ds.account.envelope.notification.api");
 	}
-	
+
 	public String getEnvelopesUpdateApi() {
 		return env.getProperty("ds.account.envelope.update.api");
 	}
@@ -111,16 +111,28 @@ public class PSProperties {
 	public String getReqKeysMissingErrorMessage() {
 		return env.getProperty("ps.req.keys.missing.error.message");
 	}
-	
-	public String getFriendlyAccountIdMissingErrorMessage(){
+
+	public String getFriendlyAccountIdMissingErrorMessage() {
 		return env.getProperty("ps.friendlyaccountid.missing.error.message");
 	}
-	
-	public String getFriendlyAccountIdListEmptyErrorMessage(){
+
+	public String getFriendlyAccountIdListEmptyErrorMessage() {
 		return env.getProperty("ps.friendlyaccountid.listitems.empty.error.message");
 	}
-	
-	public String getFriendlyAccountIdListInvalidErrorMessage(){
+
+	public String getFriendlyAccountIdListInvalidErrorMessage() {
 		return env.getProperty("ps.friendlyaccountid.listitems.invalid.error.message");
+	}
+
+	public String getDSAPIThresholdPercent() {
+		return env.getProperty("ds.api.thresholdpercent");
+	}
+
+	public boolean isBurstLimitCheckEnabled() {
+		return Boolean.parseBoolean(env.getProperty("ds.api.enableburstlimit"));
+	}
+
+	public boolean isTooManyRequestCheckEnabled() {
+		return Boolean.parseBoolean(env.getProperty("ds.api.enabletoomanyrequest"));
 	}
 }

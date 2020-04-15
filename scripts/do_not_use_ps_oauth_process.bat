@@ -8,7 +8,7 @@ rem * 2 * * * [psdir]/ps_oauth_process.bat
 rem script parameters
 set userIds="[UserIds comma separated for each site]"
 set integratorKey="[Integrator Key]"
-set secretKey="[Secrey Key]"
+set secretKey="[Secret Key]"
 set scope="signature"
 set privatePemPath="[Private Pem Key Path]"
 set publicPemPath="[Public Pem Key Path]"

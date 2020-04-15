@@ -7,6 +7,9 @@ import java.net.Proxy;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
@@ -17,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -38,6 +42,8 @@ import com.docusign.jwt.utils.PemUtils;
 public class PSUtils {
 
 	final static Logger logger = Logger.getLogger(PSUtils.class);
+
+	public static String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'";
 
 	public static List<String> splitStringtoList(String str, String delimiter) {
 
@@ -176,9 +182,8 @@ public class PSUtils {
 	 * @throws IOException
 	 */
 	public static AccessToken generateAccessToken(final String userId, final String integratorKey,
-			final String privatePemPath, final String publicPemPath, final String scope,
-			final String tokenExpiryLimit, final String proxyHost, final String proxyPort, String audience,
-			String oAuthUrl) throws IOException {
+			final String privatePemPath, final String publicPemPath, final String scope, final String tokenExpiryLimit,
+			final String proxyHost, final String proxyPort, String audience, String oAuthUrl) throws IOException {
 
 		java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) PemUtils.readPrivateKeyFromFile(privatePemPath,
@@ -246,6 +251,26 @@ public class PSUtils {
 		logger.info(" Created jwt is " + jwt);
 
 		return jwt;
+	}
+
+	public static Long addSecondsAndconvertToEpochTime(String dateTimeAsString, Integer numberOfSeconds) {
+
+		Long epochTime = LocalDateTime.parse(dateTimeAsString, DateTimeFormatter.ofPattern(DATE_TIME_PATTERN))
+				.plusSeconds(numberOfSeconds).toEpochSecond(ZoneOffset.UTC);
+
+		return epochTime;
+	}
+
+	public static String currentTimeInString() {
+
+		LocalDateTime dateTime = LocalDateTime.now(TimeZone.getTimeZone("UTC").toZoneId());
+
+		if (null != dateTime) {
+
+			return dateTime.format(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN));
+		}
+
+		return null;
 	}
 
 }

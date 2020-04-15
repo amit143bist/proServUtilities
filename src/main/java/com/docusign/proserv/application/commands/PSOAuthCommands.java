@@ -16,7 +16,6 @@ import org.apache.commons.lang3.EnumUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
@@ -55,7 +54,7 @@ public class PSOAuthCommands extends AbstractPSCommands implements CommandMarker
 	@Resource
 	private Environment env;
 
-	@Bean
+//	@Bean
 	public PropertiesFactoryBean profileProperties() {
 
 		PropertiesFactoryBean pfb = new PropertiesFactoryBean();
@@ -67,7 +66,7 @@ public class PSOAuthCommands extends AbstractPSCommands implements CommandMarker
 	@Autowired
 	public PSProperties psProps;
 
-	@Autowired
+//	@Autowired
 	PropertiesFactoryBean profileProperties;
 
 	@CliAvailabilityIndicator({ "ps_oauth_process" })

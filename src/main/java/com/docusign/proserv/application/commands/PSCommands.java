@@ -39,6 +39,7 @@ import com.docusign.proserv.application.utils.PSProperties;
 import com.docusign.proserv.application.utils.PSUtils;
 
 @Component
+@Deprecated
 public class PSCommands extends AbstractPSCommands implements CommandMarker {
 
 	final static Logger logger = Logger.getLogger(PSCommands.class);
