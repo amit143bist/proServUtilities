@@ -13,7 +13,7 @@
 	<properties>
 		<spring.shell.version>1.2.0.RELEASE</spring.shell.version>
 		<jar.mainclass>org.springframework.shell.Bootstrap</jar.mainclass>
-		<spring.version>5.1.8.RELEASE</spring.version>
+		<spring.version>5.3.18</spring.version>
 		<spring.batch.version>4.1.2.RELEASE</spring.batch.version>
 		<jackson.version>2.10.3</jackson.version>
 		<super-csv.version>2.3.0</super-csv.version>
